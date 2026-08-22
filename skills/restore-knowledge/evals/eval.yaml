@@ -18,6 +18,8 @@ cases:
     - evals/cases/source-and-uncertainty.yaml
     - evals/cases/self-contained-wiki.yaml
     - evals/cases/missing-conversation.yaml
+    - evals/cases/personalized-learning-resources.yaml
+    - evals/cases/offline-resource-boundary.yaml
   defaults:
     timeout_seconds: 300
     max_turns: 5

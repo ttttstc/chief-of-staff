@@ -1,6 +1,6 @@
 ---
 name: restore-knowledge
-description: Convert reusable knowledge newly introduced, clarified, or researched in the current conversation into a self-contained Chinese Markdown LLM Wiki entry. Use when the user invokes restore-knowledge or asks to archive learning from a discussion; exclude decisions, task logs, and unsupported filler.
+description: Convert reusable knowledge newly introduced, clarified, or researched in the current conversation into a self-contained Chinese Markdown LLM Wiki entry with targeted learning resources. Use when the user invokes restore-knowledge or asks to archive learning from a discussion; exclude decisions, task logs, and unsupported filler.
 license: MIT
 ---
 
@@ -45,7 +45,7 @@ license: MIT
 
 ## 处理证据
 
-只保留对话中实际出现或本轮已经核验的来源，不虚构链接、作者、日期或结论。默认不为归档任务另行扩展调研；用户明确要求补证据时才进行查证。
+只保留对话中实际出现或本轮已经核验的来源，不虚构链接、作者、日期或结论。默认不为归档正文另行扩展主题调研；用户明确要求补证据时才进行查证。文末学习资源的定向核验是例外，但不得借此扩写正文知识。
 
 区分：
 
@@ -56,6 +56,28 @@ license: MIT
 
 事实具有时效性时注明核验日期或版本。来源与表述不一致时缩小主张，不用强来源包装弱推断。与关键知识无关的链接不保留。
 
+## 生成深入学习资源
+
+每篇有效 Wiki 后补充进一步学习方向和专属学习资源清单。先从对话识别两到四个最值得继续深入的领域，优先覆盖：
+
+- 用户明确表现出兴趣或“原来如此”等认知突破的地方；
+- 当前模型中仍薄弱的机制、证据或实践环节；
+- 会扩大视野、提供强反例或帮助迁移的相邻领域。
+
+无法观察用户内心感受时，不声称识别了“啊哈时刻”；只能根据其明确表达和对话中的认知缺口推断，并把推断写成学习建议。
+
+通常推荐三到五项关键资源，可以是经典书籍、核心期刊或专题杂志、值得长期追踪的作者或博主、播客、课程、专栏和权威资料库。选择标准：
+
+1. 与当前 Wiki 的具体知识或缺口直接相关；
+2. 每项提供不同的独特视角，整体兼顾理论、证据、反例或实践；
+3. 优先原作者、出版社、期刊、机构或频道官方页面；
+4. 说明资源能补什么、为何适合当前主题，以及建议从哪里开始；
+5. 不因用户给出的类别示例而机械凑齐每一种媒介。
+
+工具可用时，对候选资源做窄范围核验：确认资源真实存在、链接可访问、作者或机构匹配；声称博客、播客、专栏仍在更新时，还要核验近期活动。工具不可用时，只推荐有充分把握的资源，标记“本轮未联网核验”，不编造网址或当前活跃状态。可靠资源不足三项时，宁可少列并说明原因，也不要补齐虚构或低相关资源。
+
+涉及用户私人情境时，用抽象主题检索，不把敏感对话原文发送给外部服务。资源推荐不是新的决策结论，也不记录用户最后选择了什么。
+
 ## 生成 LLM Wiki
 
 阅读[知识归档协议](references/wiki-format.md)，按主题边界生成一篇或数篇独立文档。每篇只表达一个内聚主题；多个主题没有共同解释框架时拆开，避免把整段聊天压成一篇流水账。
@@ -65,6 +87,9 @@ license: MIT
 1. 删除任何决策结论后，文档是否仍然成立；
 2. 文档是否解释“是什么、为什么、何时成立、何时不成立”；
 3. 关键事实是否保留来源和证据状态；
-4. 文档是否能被未来的人工智能或用户独立理解和检索。
+4. 文档是否能被未来的人工智能或用户独立理解和检索；
+5. 学习资源是否真实、互补，并逐项说明独特视角及与当前主题的关联。
+
+没有有效 Wiki 条目时，不生成泛化学习清单，除非用户另行明确要求资源推荐。
 
 默认只输出 Markdown，不声称已经保存。用户明确提供知识库位置并要求写入时，才执行保存；不得覆盖同名文件，除非用户明确授权。

@@ -65,7 +65,7 @@ In Claude Code, replace `$test-me` with `/test-me`.
 $restore-knowledge
 ```
 
-Use `/restore-knowledge` in Claude Code. It archives only reusable knowledge that was introduced or clarified, excluding final decisions, action assignments, and chat chronology.
+Use `/restore-knowledge` in Claude Code. It archives only reusable knowledge that was introduced or clarified, excluding final decisions, action assignments, and chat chronology, then adds targeted resources for deeper learning.
 
 ## Capabilities
 
@@ -77,7 +77,7 @@ Use `/restore-knowledge` in Claude Code. It archives only reusable knowledge tha
 | Plan stress test | `test-me` | Finds hidden assumptions, counterexamples, third paths, second-order effects, failure signals, and validation gaps |
 | Source grounding | `ask-lyl`, `test-me` | Verifies decision-relevant external facts and cites primary sources only beside key judgments that affect the design |
 | Reality calibration | `ask-lyl`, `test-me` | Connects conclusions to experiments, runtime results, user behavior, business metrics, or other observable evidence |
-| Knowledge restoration | `restore-knowledge` | Converts new concepts, mechanisms, evidence, and boundaries into an archivable Markdown LLM Wiki |
+| Knowledge restoration | `restore-knowledge` | Converts cognitive deltas into a Markdown LLM Wiki and recommends deeper-learning resources tied to current knowledge gaps |
 
 The three entry points are fully independent. Each can be installed separately, and none invokes or depends on another skill.
 
@@ -153,7 +153,7 @@ Limit the archive scope:
 $restore-knowledge Archive only the new knowledge about bidirectional steelmanning and red-team review.
 ```
 
-The skill detects cognitive deltas, then removes decisions, tasks, sensitive personal data, repetition, and unsupported guesses. It emits one or more self-contained Markdown documents with applicability boundaries, evidence status, actual sources, and related concepts. If the conversation contains no archive-worthy knowledge, it says so instead of manufacturing content.
+The skill detects cognitive deltas, then removes decisions, tasks, sensitive personal data, repetition, and unsupported guesses. It emits one or more self-contained Markdown documents with applicability boundaries, evidence status, actual sources, and related concepts. Each Wiki also identifies deeper-learning areas and recommends three to five key resources, explaining each resource's unique perspective, relevance, and suggested entry point. If the conversation contains no archive-worthy knowledge, it says so instead of manufacturing content or a generic reading list.
 
 ## How it works
 
@@ -233,6 +233,8 @@ The assessment avoids pseudo-precise scores and uses four qualitative diagnoses:
 
 Each document covers one cohesive topic and explains what it is, why it works, where it applies, and where it fails. External claims retain their actual source and verification state. When the skill cannot know whether the user already knew something, it describes it only as knowledge formed or clarified in the conversation rather than claiming a learning outcome.
 
+The learning list is not a popularity-based content bundle. Resources are selected from explicit interests, cognitive breakthroughs, and unresolved mechanism, evidence, or practice gaps, with complementary coverage across theory, evidence, counterarguments, and practice. When tools are available, official pages and current status are verified. Offline output marks resources as unverified instead of inventing URLs, activity claims, or chapter details.
+
 ## Repository structure
 
 ```text
@@ -282,7 +284,7 @@ Supporting references are loaded only when a task needs them. The `evals/` direc
 
 ## Development and evaluation
 
-The three skills contain independent evaluation suites with 30 behavioral cases in total. After installing [skill-up](https://github.com/alibaba/skill-up), run:
+The three skills contain independent evaluation suites with 32 behavioral cases in total. After installing [skill-up](https://github.com/alibaba/skill-up), run:
 
 ```bash
 skill-up validate skills/ask-lyl/evals/eval.yaml
