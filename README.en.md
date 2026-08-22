@@ -67,7 +67,7 @@ In Claude Code, replace `$test-me` with `/test-me`.
 | Autonomous-thinking mode | `ask-lyl` | AI supplies concepts, evidence, structure, options, and challenges while the user makes the key decisions |
 | Understanding assessment | `test-me` | Distinguishes genuine understanding from repetition, transfer failure, and the illusion of cognitive completion |
 | Plan stress test | `test-me` | Finds hidden assumptions, counterexamples, third paths, second-order effects, failure signals, and validation gaps |
-| Source grounding | `ask-lyl`, `test-me` | Verifies decision-relevant external facts when tools are available and separates facts, claims, inferences, and assumptions |
+| Source grounding | `ask-lyl`, `test-me` | Verifies decision-relevant external facts and cites primary sources only beside key judgments that affect the design |
 | Reality calibration | `ask-lyl`, `test-me` | Connects conclusions to experiments, runtime results, user behavior, business metrics, or other observable evidence |
 
 The two entry points are fully independent. Each can be installed separately, and neither invokes nor depends on another skill.
