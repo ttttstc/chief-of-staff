@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-一组面向 Claude Code 与 Codex 的深度分析技能：既能像参谋长一样给出明确建议，也能帮助用户保留问题定义、证据判断、价值取舍和最终决策权。
+一组面向 Claude Code 与 Codex 的认知增强技能：既能像参谋长一样给出明确建议，也能帮助用户保留问题定义、证据判断、价值取舍和最终决策权，并把对话形成的知识沉淀进个人知识库。
 
 它适合需要认真判断的工作、技术、产品、战略、学习和人生问题。核心目标不是让人工智能替你思考，而是让你在充分利用人工智能以后，仍能独立解释问题、发现缺口并作出关键决定。
 
@@ -18,8 +18,8 @@ macOS、Linux 或 WSL：
 
 ```bash
 mkdir -p ~/.codex/skills ~/.claude/skills
-cp -R skills/ask-lyl skills/test-me ~/.codex/skills/
-cp -R skills/ask-lyl skills/test-me ~/.claude/skills/
+cp -R skills/ask-lyl skills/test-me skills/restore-knowledge ~/.codex/skills/
+cp -R skills/ask-lyl skills/test-me skills/restore-knowledge ~/.claude/skills/
 ```
 
 Windows PowerShell：
@@ -29,11 +29,11 @@ $codexSkills = Join-Path $env:USERPROFILE ".codex\skills"
 $claudeSkills = Join-Path $env:USERPROFILE ".claude\skills"
 
 New-Item -ItemType Directory -Force -Path $codexSkills, $claudeSkills | Out-Null
-Copy-Item skills\ask-lyl, skills\test-me -Destination $codexSkills -Recurse
-Copy-Item skills\ask-lyl, skills\test-me -Destination $claudeSkills -Recurse
+Copy-Item skills\ask-lyl, skills\test-me, skills\restore-knowledge -Destination $codexSkills -Recurse
+Copy-Item skills\ask-lyl, skills\test-me, skills\restore-knowledge -Destination $claudeSkills -Recurse
 ```
 
-部分 Codex 环境使用 `~/.agents/skills/`。如果你的客户端已配置该目录，请将两个技能目录复制到那里。安装后新建会话或重启客户端，使技能被重新发现。
+部分 Codex 环境使用 `~/.agents/skills/`。如果你的客户端已配置该目录，请将三个技能目录复制到那里。安装后新建会话或重启客户端，使技能被重新发现。
 
 ### 2. 发起第一次分析
 
@@ -59,6 +59,14 @@ $test-me <TOPIC_OR_PLAN>
 
 Claude Code 中将 `$test-me` 替换为 `/test-me`。
 
+### 4. 归档本次对话的知识增量
+
+```text
+$restore-knowledge
+```
+
+Claude Code 中使用 `/restore-knowledge`。它只归档新增或被澄清的可复用知识，不记录用户最终决策、行动安排和聊天流水账。
+
 ## 功能
 
 | 能力 | 入口 | 产生的结果 |
@@ -69,8 +77,9 @@ Claude Code 中将 `$test-me` 替换为 `/test-me`。
 | 方案压力测试 | `test-me` | 识别隐含假设、反例、第三条路径、二阶影响、失败信号和验证缺口 |
 | 来源查证 | `ask-lyl`、`test-me` | 核验会改变判断的外部事实，并只在影响设计的关键判定附近附原始资料链接 |
 | 现实校准 | `ask-lyl`、`test-me` | 把结论连接到实验、运行结果、用户行为、业务指标或其他可观察证据 |
+| 知识还原 | `restore-knowledge` | 把对话中新形成的概念、机制、证据和适用边界整理为可归档的 Markdown LLM Wiki |
 
-两个入口完全独立，可以分别安装；它们不会调用或依赖其他技能。
+三个入口完全独立，可以分别安装；它们不会调用或依赖其他技能。
 
 ## 使用方法
 
@@ -130,6 +139,22 @@ $test-me <PREVIOUS_DISCUSSION>
 
 知识检验一次只问一个问题，避免后续问题泄露答案；方案检验会一次提出两到四个彼此独立的高价值挑战。发现缺口后，技能会给出最小修正，并用新情境复测迁移能力。用户可以随时要求跳过、揭晓或停止。
 
+### 使用 `restore-knowledge`
+
+归档当前对话：
+
+```text
+$restore-knowledge
+```
+
+归档指定范围：
+
+```text
+$restore-knowledge 只归档我们关于双向钢人和红队检查的新增知识
+```
+
+技能先识别本次对话的认知增量，再剔除决策、待办、个人敏感信息、重复内容和无证据猜测。输出按主题拆分为自包含 Markdown 文档，保留适用边界、证据状态、来源和关联概念。没有值得归档的新增知识时会直接说明，不制造伪知识。
+
 ## 工作原理
 
 ```mermaid
@@ -147,6 +172,10 @@ flowchart TD
     I --> K[test-me 可独立检验]
     J --> K
     K --> L[诊断、最小修正、迁移复测]
+    I --> M[restore-knowledge 还原知识]
+    J --> M
+    L --> M
+    M --> N[Markdown LLM Wiki]
 ```
 
 ### 1. 混合路由
@@ -198,6 +227,12 @@ flowchart TD
 
 评测不使用伪精确分数，而是给出四种定性诊断：能独立重建；基本理解但模型有缺口；能复述但不能迁移；存在认知完成幻觉。
 
+### 6. 认知增量归档
+
+`restore-knowledge` 不把聊天摘要直接塞进知识库。它先识别本轮新增或被澄清的概念、机制、证据、边界和可迁移模型，再执行“非决策过滤”：删除最终选择、批准事项、负责人、时间安排和任务状态，仅保留能脱离当前项目独立成立的知识。
+
+每篇文档围绕一个内聚主题，说明它是什么、为什么成立、何时适用和何时失效。外部主张保留实际出现的来源与核验状态；无法判断用户是否早已知道时，只称其为“本次对话形成或澄清的知识”，不冒充学习效果证明。
+
 ## 项目结构
 
 ```text
@@ -210,10 +245,15 @@ skills/
 │   │   ├── cognitive-autonomy.md
 │   │   └── evidence-and-reality.md
 │   └── evals/
-└── test-me/
+├── test-me/
     ├── SKILL.md
     ├── agents/openai.yaml
     ├── references/assessment.md
+    └── evals/
+└── restore-knowledge/
+    ├── SKILL.md
+    ├── agents/openai.yaml
+    ├── references/wiki-format.md
     └── evals/
 ```
 
@@ -226,7 +266,7 @@ skills/
 | 客户端 | Claude Code、Codex |
 | 运行时依赖 | 无其他技能、脚本或网络服务依赖 |
 | 搜索能力 | 可选；工具可用时主动查证，工具不可用时明确未核验项和验证路径 |
-| 安装粒度 | `ask-lyl` 与 `test-me` 可单独安装 |
+| 安装粒度 | `ask-lyl`、`test-me` 与 `restore-knowledge` 可单独安装 |
 | 输出语言 | 技能面向用户的自然语言为中文，规范要求的英文 `description` 和技术标识除外 |
 
 ## 安全与边界
@@ -242,13 +282,15 @@ skills/
 
 ## 开发与评测
 
-两个技能包含相互独立的评测清单，共 24 个行为用例。安装 [skill-up](https://github.com/alibaba/skill-up) 后可执行：
+三个技能包含相互独立的评测清单，共 30 个行为用例。安装 [skill-up](https://github.com/alibaba/skill-up) 后可执行：
 
 ```bash
 skill-up validate skills/ask-lyl/evals/eval.yaml
 skill-up validate skills/test-me/evals/eval.yaml
+skill-up validate skills/restore-knowledge/evals/eval.yaml
 skill-up run skills/ask-lyl/evals/eval.yaml
 skill-up run skills/test-me/evals/eval.yaml
+skill-up run skills/restore-knowledge/evals/eval.yaml
 ```
 
 使用 `--engine claude_code` 或 `--engine codex` 可切换评测引擎。语义用例使用 `agent_judge`，完整运行需要相应模型提供方的接口密钥；没有凭据时仍可执行 `validate` 和 `--dry-run`。
@@ -259,7 +301,7 @@ skill-up run skills/test-me/evals/eval.yaml
 
 ### 安装后为什么没有出现技能？
 
-确认 `SKILL.md` 位于 `<技能目录>/ask-lyl/SKILL.md` 或 `<技能目录>/test-me/SKILL.md`，然后新建会话或重启客户端。不要把外层仓库目录整体多嵌套一层。
+确认 `SKILL.md` 位于 `<技能目录>/ask-lyl/SKILL.md`、`<技能目录>/test-me/SKILL.md` 或 `<技能目录>/restore-knowledge/SKILL.md`，然后新建会话或重启客户端。不要把外层仓库目录整体多嵌套一层。
 
 ### 没有联网或搜索工具还能使用吗？
 
@@ -271,7 +313,11 @@ skill-up run skills/test-me/evals/eval.yaml
 
 ### `test-me` 是否必须依赖 `ask-lyl`？
 
-不需要。两个技能完全独立，`test-me` 可以检验任意材料、讨论或用户方案。
+不需要。三个技能完全独立，`test-me` 可以检验任意材料、讨论或用户方案。
+
+### `restore-knowledge` 会自动保存到知识库吗？
+
+默认不会。它输出可直接归档的 Markdown；只有用户明确提供知识库位置并要求写入时才保存，而且默认不覆盖同名文件。
 
 ## 方法来源
 

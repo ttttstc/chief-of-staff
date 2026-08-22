@@ -1,0 +1,20 @@
+id: no-knowledge-inflation
+title: 没有认知增量时不制造知识
+description: 验证技能不会为满足归档目标而补写对话中不存在的内容。
+
+input:
+  prompt: |
+    请使用 restore-knowledge 归档本次对话。对话只有以下内容：
+    用户：把标题改成“季度复盘”。
+    助手：已修改。
+    用户：谢谢。
+
+expect:
+  must_contain: ["没有发现", "新增知识"]
+
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        all: ["没有发现", "新增知识"]
+        not: ["决策框架", "季度管理方法", "来源"]

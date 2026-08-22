@@ -1,0 +1,17 @@
+id: source-and-uncertainty
+title: 保留来源并区分证据状态
+description: 验证外部主张不会被改写为无条件事实，也不会虚构来源。
+
+input:
+  prompt: |
+    请使用 restore-knowledge 归档新增知识：我们阅读了 PostgreSQL 官方文档 https://www.postgresql.org/docs/current/indexes.html ，确认索引能够加速某些查询，但也会增加写入和存储开销。讨论中还有人说“索引通常能让查询快十倍”，但没有提供测试或来源。
+
+judge:
+  type: agent_judge
+  model: openai/gpt-5.4
+  criteria:
+    - "保留实际给出的 PostgreSQL 官方文档链接"
+    - "将索引的查询收益、写入与存储成本表达为有条件的知识"
+    - "把快十倍标为未核验主张或删除，不将其写成事实"
+    - "不虚构新的论文、链接、测试结果或精确数值"
+  pass_threshold: 0.85

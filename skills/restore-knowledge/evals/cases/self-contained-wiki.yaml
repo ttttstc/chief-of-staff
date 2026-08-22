@@ -1,0 +1,17 @@
+id: self-contained-wiki
+title: 把对话语言改写为自包含知识
+description: 验证文档脱离原对话后仍能被人和人工智能理解。
+
+input:
+  prompt: |
+    请使用 restore-knowledge 归档：刚才说的“双向钢人”不是折中，而是分别构造支持当前倾向与反对当前倾向的最强论证。它用于暴露双方最强证据、隐含假设和反转条件；如果只是给两边各列几个弱点，就不算完成。
+
+judge:
+  type: agent_judge
+  model: openai/gpt-5.4
+  criteria:
+    - "使用可独立检索的主题标题并解释双向钢人的定义、用途和失败边界"
+    - "不使用刚才、上文、我们的方案等失效指代"
+    - "没有添加对话中不存在的研究来源或权威背书"
+    - "输出符合 Markdown 文档结构"
+  pass_threshold: 0.85
