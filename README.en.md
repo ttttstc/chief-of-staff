@@ -65,7 +65,7 @@ In Claude Code, replace `$test-me` with `/test-me`.
 $restore-knowledge
 ```
 
-Use `/restore-knowledge` in Claude Code. It archives only reusable knowledge that was introduced or clarified, excluding final decisions, action assignments, and chat chronology, then adds targeted resources for deeper learning.
+Use `/restore-knowledge` in Claude Code. It archives verified facts, reasoned judgments, failure cases, and reusable checklists, then adds targeted resources for deeper learning. One-off task assignments and chat chronology are excluded.
 
 ## Capabilities
 
@@ -77,7 +77,7 @@ Use `/restore-knowledge` in Claude Code. It archives only reusable knowledge tha
 | Plan stress test | `test-me` | Finds hidden assumptions, counterexamples, third paths, second-order effects, failure signals, and validation gaps |
 | Source grounding | `ask-lyl`, `test-me` | Verifies decision-relevant external facts and cites primary sources only beside key judgments that affect the design |
 | Reality calibration | `ask-lyl`, `test-me` | Connects conclusions to experiments, runtime results, user behavior, business metrics, or other observable evidence |
-| Knowledge restoration | `restore-knowledge` | Converts cognitive deltas into a Markdown LLM Wiki and recommends deeper-learning resources tied to current knowledge gaps |
+| Knowledge restoration | `restore-knowledge` | Archives facts, judgments, failure cases, and reusable checklists, then recommends resources tied to current knowledge gaps |
 
 The three entry points are fully independent. Each can be installed separately, and none invokes or depends on another skill.
 
@@ -153,7 +153,7 @@ Limit the archive scope:
 $restore-knowledge Archive only the new knowledge about bidirectional steelmanning and red-team review.
 ```
 
-The skill detects cognitive deltas, then removes decisions, tasks, sensitive personal data, repetition, and unsupported guesses. It emits one or more self-contained Markdown documents with applicability boundaries, evidence status, actual sources, and related concepts. Each Wiki also identifies deeper-learning areas and recommends three to five key resources, explaining each resource's unique perspective, relevance, and suggested entry point. If the conversation contains no archive-worthy knowledge, it says so instead of manufacturing content or a generic reading list.
+The skill routes cognitive deltas into four assets: verified facts; user judgments with trade-off reasoning; failure cases disproved or exposed by real evidence; and question, review, acceptance, or risk checklists that transfer to new situations. It removes tasks, owners, sensitive personal data, repetition, and unsupported guesses. Each Wiki also identifies deeper-learning areas and recommends three to five key resources, explaining each resource's unique perspective, relevance, and suggested entry point. If the conversation contains no archive-worthy content, it says so instead of manufacturing knowledge or a generic reading list.
 
 ## How it works
 
@@ -227,11 +227,11 @@ Merely completing the protocol does not prove that the user's ability has improv
 
 The assessment avoids pseudo-precise scores and uses four qualitative diagnoses: independent reconstruction; basic understanding with model gaps; repetition without transfer; or an illusion of cognitive completion.
 
-### 6. Cognitive-delta archiving
+### 6. Four cognitive asset types
 
-`restore-knowledge` does not dump chat summaries into a knowledge base. It detects concepts, mechanisms, evidence, boundaries, and reusable models introduced or clarified in the conversation, then applies a non-decision filter. Final choices, approvals, owners, schedules, and task status are removed; only knowledge that remains meaningful outside the immediate project is retained.
+`restore-knowledge` does not dump chat summaries into a knowledge base. It handles four asset types separately: facts require sources, scope, and verification status; judgments retain the choice, alternatives, decisive reasons, assumptions, strongest objection, and reversal conditions; failure cases separate observed results, disconfirming evidence, confirmed causes, and root-cause hypotheses; checklists must be executable, transferable, and marked as draft or validated.
 
-Each document covers one cohesive topic and explains what it is, why it works, where it applies, and where it fails. External claims retain their actual source and verification state. When the skill cannot know whether the user already knew something, it describes it only as knowledge formed or clarified in the conversation rather than claiming a learning outcome.
+Each document covers one cohesive topic and includes only asset types actually produced in the conversation. It does not manufacture all four. A final choice may be archived as a reasoned judgment, while isolated approvals, owners, dates, and action status remain excluded. External claims retain their actual source and verification state, and a previous AI response is not evidence of its own correctness.
 
 The learning list is not a popularity-based content bundle. Resources are selected from explicit interests, cognitive breakthroughs, and unresolved mechanism, evidence, or practice gaps, with complementary coverage across theory, evidence, counterarguments, and practice. When tools are available, official pages and current status are verified. Offline output marks resources as unverified instead of inventing URLs, activity claims, or chapter details.
 
@@ -284,7 +284,7 @@ Supporting references are loaded only when a task needs them. The `evals/` direc
 
 ## Development and evaluation
 
-The three skills contain independent evaluation suites with 32 behavioral cases in total. After installing [skill-up](https://github.com/alibaba/skill-up), run:
+The three skills contain independent evaluation suites with 35 behavioral cases in total. After installing [skill-up](https://github.com/alibaba/skill-up), run:
 
 ```bash
 skill-up validate skills/ask-lyl/evals/eval.yaml

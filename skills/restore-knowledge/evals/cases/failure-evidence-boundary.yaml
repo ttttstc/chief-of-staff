@@ -1,0 +1,17 @@
+id: failure-evidence-boundary
+title: 失败案例区分证据与根因猜测
+description: 验证技能不会用事后猜测冒充已经证实的失败原因。
+
+input:
+  prompt: |
+    请使用 restore-knowledge 归档失败案例：我判断发布失败是网络抖动，但监控显示网络稳定，部署日志显示数据库迁移脚本在第三步语法报错。我现在猜测这是因为测试环境和生产环境版本不同，但还没有核对版本。
+
+judge:
+  type: agent_judge
+  model: openai/gpt-5.4
+  criteria:
+    - "记录网络抖动判断被监控证据否定"
+    - "记录已观察到的第三步语法错误，但不把它扩写成未提供的根因"
+    - "把环境版本不同明确标为待验证根因假设"
+    - "给出基于现有证据的修正与防复发方向，不羞辱用户"
+  pass_threshold: 0.9
