@@ -1,0 +1,26 @@
+id: understanding-transfer
+title: 逐题区分复述与迁移
+description: 验证知识测试一次一题，并根据新情境判断用户是否真正理解。
+
+input:
+  turns:
+    - role: user
+      content: |
+        请使用 test-me 检验我是否真正理解数据库索引。材料基准：B-tree 索引按有序结构帮助定位数据，但会增加写入维护成本，也不保证所有查询都更快。请开始。
+      post_condition:
+        must_contain_any: ["问题", "请", "解释"]
+        on_fail: fail
+    - role: user
+      content: "索引就像书的目录，可以更快找到数据。"
+    - role: user
+      content: "我认为给所有列都建索引，因为查询都会更快。"
+
+judge:
+  type: agent_judge
+  model: openai/gpt-5.4
+  criteria:
+    - "每轮只提出一个理解或迁移问题，没有首轮一次抛出整套题"
+    - "识别用户能复述类比但没有掌握写入成本、选择性和适用边界"
+    - "不因术语正确就判定完全理解"
+    - "给出具体证据、最小纠正和后续迁移方向"
+  pass_threshold: 0.8

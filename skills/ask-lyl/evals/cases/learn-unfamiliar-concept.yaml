@@ -1,0 +1,17 @@
+id: learn-unfamiliar-concept
+title: 学习陌生技术概念时先提供认知输入
+description: 验证自主思考不是把教学责任推回用户。
+
+input:
+  prompt: |
+    请使用 ask-lyl 自主思考模式。我完全不了解事件溯源，但需要判断它是否适合我们的订单系统。请帮助我理解并作出判断。
+
+judge:
+  type: agent_judge
+  model: openai/gpt-5.4
+  criteria:
+    - "用户完全陌生时先提供中性的核心概念、边界、收益、代价和适用条件，而不是要求其先给观点"
+    - "把概念理解连接到订单系统的具体决策变量和现实验证"
+    - "区分事实、设计推断和项目特有未知"
+    - "最终将是否采用及愿意承担的复杂度作为用户关键决策"
+  pass_threshold: 0.8

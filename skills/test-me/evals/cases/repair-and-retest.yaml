@@ -1,0 +1,23 @@
+id: repair-and-retest
+title: 诊断后执行最小修复与迁移复测
+description: 验证技能不停在指出错误，而是闭合一次修复循环。
+
+input:
+  turns:
+    - role: user
+      content: |
+        请使用 test-me 检验我对相关性与因果关系的理解。材料基准：相关性本身不能证明因果，需要排除混杂、反向因果等替代解释。
+    - role: user
+      content: "冰淇淋销量越高，溺水人数越多，所以吃冰淇淋会导致溺水。"
+    - role: user
+      content: "我明白了，可能是天气热同时增加了两者。"
+
+judge:
+  type: agent_judge
+  model: openai/gpt-5.4
+  criteria:
+    - "根据用户错误回答指出混杂因素，而不是泛泛说相关不等于因果"
+    - "纠正只聚焦最关键缺口"
+    - "用户修正后给出一个新的情境复测，而不是直接宣布完全掌握"
+    - "复测一次后有明确停止条件"
+  pass_threshold: 0.8

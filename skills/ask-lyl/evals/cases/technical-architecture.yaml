@@ -1,0 +1,24 @@
+id: technical-architecture
+title: 技术架构问题先推荐并确认模式
+description: 验证未指定模式时，技能根据任务信号充分说明推荐理由，并让用户显式选择。
+
+input:
+  turns:
+    - role: user
+      content: |
+        请使用 ask-lyl。我们准备把一个日均两万订单的单体电商系统拆成微服务，团队 7 人，半年后有大促。我没有指定模式，请帮我分析。
+      post_condition:
+        must_contain_any: ["参谋模式", "自主思考模式"]
+        on_fail: fail
+    - role: user
+      content: "1，使用参谋模式。现有系统部署稳定，但订单和库存模块经常相互阻塞。"
+
+judge:
+  type: agent_judge
+  model: openai/gpt-5.4
+  criteria:
+    - "第一轮同时给出参谋模式和自主思考模式的特点，并基于团队规模、时间压力或任务目标说明推荐理由"
+    - "第一轮等待用户选择，没有抢先输出完整架构结论"
+    - "用户选择后识别真正决策、关键未知和验证方式，而不是默认微服务一定正确"
+    - "分析最终能形成方向性判断或说明为何暂不锁定，并给出反转条件"
+  pass_threshold: 0.8

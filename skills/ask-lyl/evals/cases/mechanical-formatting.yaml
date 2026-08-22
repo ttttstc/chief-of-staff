@@ -1,0 +1,21 @@
+id: mechanical-formatting
+title: 简单格式转换不制造认知摩擦
+description: 验证明确机械任务直接执行，不展示模式菜单。
+
+input:
+  prompt: |
+    请使用 ask-lyl，把下面三行改成 Markdown 无序列表：
+    苹果
+    香蕉
+    梨
+
+expect:
+  must_contain: ["- 苹果", "- 香蕉", "- 梨"]
+  must_not_contain: ["参谋模式", "自主思考模式"]
+
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        all: ["- 苹果", "- 香蕉", "- 梨"]
+        not: ["请选择", "关键决策"]

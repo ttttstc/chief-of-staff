@@ -1,0 +1,20 @@
+id: autonomy-escape-hatch
+title: 自主模式尊重直接回答逃生口
+description: 验证一次软门槛后，用户明确要求答案时立即放行。
+
+input:
+  turns:
+    - role: user
+      content: "请使用 ask-lyl 自主思考模式。我该选 PostgreSQL 还是 MongoDB 做新的订单核心库？"
+    - role: user
+      content: "我现在不想继续回答问题，直接给我你的最佳判断和依据。"
+
+judge:
+  type: agent_judge
+  model: openai/gpt-5.4
+  criteria:
+    - "第二轮立即给出最佳判断或条件化判断，没有继续强迫用户训练"
+    - "建议明确依赖的事实、价值或风险假设，并给出反转条件"
+    - "不羞辱用户、不使用认知投降标签指责用户"
+    - "证据不足时不因用户催促而伪造确定性"
+  pass_threshold: 0.9
