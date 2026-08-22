@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-A pair of deep-analysis skills for Claude Code and Codex. They can act as a decisive advisor while preserving the user's ownership of problem framing, evidence judgment, value trade-offs, and final decisions.
+A cognitive-augmentation skill suite for Claude Code and Codex. It can act as a decisive advisor, preserve the user's ownership of problem framing and final decisions, and turn knowledge gained in a conversation into durable personal notes.
 
 They are designed for consequential questions in work, technology, product, strategy, learning, and life. The goal is not to let AI think in your place, but to help you remain able to explain the problem, find gaps, and make the key decisions after using AI extensively.
 
@@ -18,8 +18,8 @@ macOS, Linux, or WSL:
 
 ```bash
 mkdir -p ~/.codex/skills ~/.claude/skills
-cp -R skills/ask-lyl skills/test-me ~/.codex/skills/
-cp -R skills/ask-lyl skills/test-me ~/.claude/skills/
+cp -R skills/ask-lyl skills/test-me skills/restore-knowledge ~/.codex/skills/
+cp -R skills/ask-lyl skills/test-me skills/restore-knowledge ~/.claude/skills/
 ```
 
 Windows PowerShell:
@@ -29,11 +29,11 @@ $codexSkills = Join-Path $env:USERPROFILE ".codex\skills"
 $claudeSkills = Join-Path $env:USERPROFILE ".claude\skills"
 
 New-Item -ItemType Directory -Force -Path $codexSkills, $claudeSkills | Out-Null
-Copy-Item skills\ask-lyl, skills\test-me -Destination $codexSkills -Recurse
-Copy-Item skills\ask-lyl, skills\test-me -Destination $claudeSkills -Recurse
+Copy-Item skills\ask-lyl, skills\test-me, skills\restore-knowledge -Destination $codexSkills -Recurse
+Copy-Item skills\ask-lyl, skills\test-me, skills\restore-knowledge -Destination $claudeSkills -Recurse
 ```
 
-Some Codex environments use `~/.agents/skills/`. If your client is configured that way, copy both skill directories there instead. Start a new session or restart the client after installation so the skills are rediscovered.
+Some Codex environments use `~/.agents/skills/`. If your client is configured that way, copy all three skill directories there instead. Start a new session or restart the client after installation so the skills are rediscovered.
 
 ### 2. Start your first analysis
 
@@ -59,6 +59,14 @@ $test-me <TOPIC_OR_PLAN>
 
 In Claude Code, replace `$test-me` with `/test-me`.
 
+### 4. Archive knowledge gained in the conversation
+
+```text
+$restore-knowledge
+```
+
+Use `/restore-knowledge` in Claude Code. It archives verified facts, reasoned judgments, failure cases, and reusable checklists, then adds targeted resources for deeper learning. One-off task assignments and chat chronology are excluded.
+
 ## Capabilities
 
 | Capability | Entry point | Outcome |
@@ -67,10 +75,9 @@ In Claude Code, replace `$test-me` with `/test-me`.
 | Autonomous-thinking mode | `ask-lyl` | AI supplies concepts, evidence, structure, options, and challenges while the user makes the key decisions |
 | Understanding assessment | `test-me` | Distinguishes genuine understanding from repetition, transfer failure, and the illusion of cognitive completion |
 | Plan stress test | `test-me` | Finds hidden assumptions, counterexamples, third paths, second-order effects, failure signals, and validation gaps |
-| Source grounding | `ask-lyl`, `test-me` | Verifies decision-relevant external facts and cites primary sources only beside key judgments that affect the design |
-| Reality calibration | `ask-lyl`, `test-me` | Connects conclusions to experiments, runtime results, user behavior, business metrics, or other observable evidence |
+| Knowledge restoration | `restore-knowledge` | Archives facts, judgments, failure cases, and reusable checklists, then recommends resources tied to current knowledge gaps |
 
-The two entry points are fully independent. Each can be installed separately, and neither invokes nor depends on another skill.
+The three entry points are fully independent. Each can be installed separately, and none invokes or depends on another skill.
 
 ## Usage
 
@@ -130,6 +137,22 @@ $test-me <PREVIOUS_DISCUSSION>
 
 Knowledge assessment asks one question at a time so later questions do not reveal answers. Plan assessment presents two to four independent, high-value challenges in one batch. When it finds an important gap, the skill gives the smallest useful correction and retests transfer in a new situation. The user can ask to skip, reveal, or stop at any time.
 
+### Using `restore-knowledge`
+
+Archive the current conversation:
+
+```text
+$restore-knowledge
+```
+
+Limit the archive scope:
+
+```text
+$restore-knowledge Archive only the new knowledge about bidirectional steelmanning and red-team review.
+```
+
+The skill routes cognitive deltas into four assets: verified facts; user judgments with trade-off reasoning; failure cases disproved or exposed by real evidence; and question, review, acceptance, or risk checklists that transfer to new situations. It removes tasks, owners, sensitive personal data, repetition, and unsupported guesses. Each Wiki also identifies deeper-learning areas and recommends three to five key resources, explaining each resource's unique perspective, relevance, and suggested entry point. If the conversation contains no archive-worthy content, it says so instead of manufacturing knowledge or a generic reading list.
+
 ## How it works
 
 ```mermaid
@@ -147,6 +170,10 @@ flowchart TD
     I --> K[test-me can assess independently]
     J --> K
     K --> L[Diagnosis, minimal correction, and transfer retest]
+    I --> M[restore-knowledge restores knowledge]
+    J --> M
+    L --> M
+    M --> N[Markdown LLM Wiki]
 ```
 
 ### 1. Hybrid routing
@@ -198,6 +225,14 @@ Merely completing the protocol does not prove that the user's ability has improv
 
 The assessment avoids pseudo-precise scores and uses four qualitative diagnoses: independent reconstruction; basic understanding with model gaps; repetition without transfer; or an illusion of cognitive completion.
 
+### 6. Four cognitive asset types
+
+`restore-knowledge` does not dump chat summaries into a knowledge base. It handles four asset types separately: facts require sources, scope, and verification status; judgments retain the choice, alternatives, decisive reasons, assumptions, strongest objection, and reversal conditions; failure cases separate observed results, disconfirming evidence, confirmed causes, and root-cause hypotheses; checklists must be executable, transferable, and marked as draft or validated.
+
+Each document covers one cohesive topic and includes only asset types actually produced in the conversation. It does not manufacture all four. A final choice may be archived as a reasoned judgment, while isolated approvals, owners, dates, and action status remain excluded. External claims retain their actual source and verification state, and a previous AI response is not evidence of its own correctness.
+
+The learning list is not a popularity-based content bundle. Resources are selected from explicit interests, cognitive breakthroughs, and unresolved mechanism, evidence, or practice gaps, with complementary coverage across theory, evidence, counterarguments, and practice. When tools are available, official pages and current status are verified. Offline output marks resources as unverified instead of inventing URLs, activity claims, or chapter details.
+
 ## Repository structure
 
 ```text
@@ -210,10 +245,15 @@ skills/
 │   │   ├── cognitive-autonomy.md
 │   │   └── evidence-and-reality.md
 │   └── evals/
-└── test-me/
+├── test-me/
     ├── SKILL.md
     ├── agents/openai.yaml
     ├── references/assessment.md
+    └── evals/
+└── restore-knowledge/
+    ├── SKILL.md
+    ├── agents/openai.yaml
+    ├── references/wiki-format.md
     └── evals/
 ```
 
@@ -226,7 +266,7 @@ Supporting references are loaded only when a task needs them. The `evals/` direc
 | Clients | Claude Code and Codex |
 | Runtime dependencies | No dependency on other skills, scripts, or network services |
 | Search | Optional; verifies sources when tools are available and identifies unverified claims and validation paths when they are not |
-| Installation granularity | `ask-lyl` and `test-me` can be installed independently |
+| Installation granularity | `ask-lyl`, `test-me`, and `restore-knowledge` can be installed independently |
 | Output language | User-facing natural language is Chinese, except the specification-required English `description` and technical identifiers |
 
 ## Safety and boundaries
@@ -242,13 +282,15 @@ Supporting references are loaded only when a task needs them. The `evals/` direc
 
 ## Development and evaluation
 
-The two skills contain independent evaluation suites with 24 behavioral cases in total. After installing [skill-up](https://github.com/alibaba/skill-up), run:
+The three skills contain independent evaluation suites with 35 behavioral cases in total. After installing [skill-up](https://github.com/alibaba/skill-up), run:
 
 ```bash
 skill-up validate skills/ask-lyl/evals/eval.yaml
 skill-up validate skills/test-me/evals/eval.yaml
+skill-up validate skills/restore-knowledge/evals/eval.yaml
 skill-up run skills/ask-lyl/evals/eval.yaml
 skill-up run skills/test-me/evals/eval.yaml
+skill-up run skills/restore-knowledge/evals/eval.yaml
 ```
 
 Use `--engine claude_code` or `--engine codex` to select an evaluation engine. Semantic cases use `agent_judge`; full runs require an API key for the corresponding model provider. Without credentials, `validate` and `--dry-run` remain available.
@@ -259,7 +301,7 @@ Native Windows environments have a Bash launch limitation for real-agent evaluat
 
 ### Why does the skill not appear after installation?
 
-Confirm that `SKILL.md` exists at `<skill-directory>/ask-lyl/SKILL.md` or `<skill-directory>/test-me/SKILL.md`, then start a new session or restart the client. Do not add an extra repository directory level around the skill folders.
+Confirm that `SKILL.md` exists at `<skill-directory>/ask-lyl/SKILL.md`, `<skill-directory>/test-me/SKILL.md`, or `<skill-directory>/restore-knowledge/SKILL.md`, then start a new session or restart the client. Do not add an extra repository directory level around the skill folders.
 
 ### Can I use the skills without internet access or search tools?
 
@@ -271,7 +313,11 @@ No. It must contribute new concepts, evidence, or challenges and batch key quest
 
 ### Does `test-me` require `ask-lyl`?
 
-No. The skills are fully independent, and `test-me` can assess any material, discussion, or user-authored plan.
+No. The three skills are fully independent, and `test-me` can assess any material, discussion, or user-authored plan.
+
+### Does `restore-knowledge` automatically save into my knowledge base?
+
+No. By default it outputs archive-ready Markdown. It writes to a knowledge-base location only when the user supplies that location and explicitly asks it to save, and it does not overwrite a same-name file by default.
 
 ## Methodology attribution
 

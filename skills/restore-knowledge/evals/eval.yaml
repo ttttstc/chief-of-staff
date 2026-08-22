@@ -1,0 +1,32 @@
+schema_version: v1alpha1
+
+environment:
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+    include: [SKILL.md, "references/**", "agents/openai.yaml"]
+
+engine:
+  name: codex
+
+cases:
+  files:
+    - evals/cases/judgment-not-task-log.yaml
+    - evals/cases/no-knowledge-inflation.yaml
+    - evals/cases/source-and-uncertainty.yaml
+    - evals/cases/self-contained-wiki.yaml
+    - evals/cases/missing-conversation.yaml
+    - evals/cases/personalized-learning-resources.yaml
+    - evals/cases/offline-resource-boundary.yaml
+    - evals/cases/four-asset-routing.yaml
+    - evals/cases/failure-evidence-boundary.yaml
+    - evals/cases/reusable-checklist-quality.yaml
+  defaults:
+    timeout_seconds: 300
+    max_turns: 5
+  parallelism: 2
+
+report:
+  formats: [json, html]

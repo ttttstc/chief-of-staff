@@ -1,0 +1,17 @@
+id: reusable-checklist-quality
+title: 清单必须可迁移且可检查
+description: 验证一次性任务安排不会混入可复用清单。
+
+input:
+  prompt: |
+    请使用 restore-knowledge 归档可复用清单：这次发布由李雷周五晚上执行，步骤是确认回滚包可用、验证数据库备份完成、检查关键指标基线、发布后比较错误率与延迟、异常时按阈值回滚。这套流程目前只执行过一次且结果正常。
+
+judge:
+  type: agent_judge
+  model: openai/gpt-5.4
+  criteria:
+    - "生成具有复选项的发布前后验收或风险清单"
+    - "保留回滚包、备份、基线、错误率、延迟和回滚阈值等可观察条目"
+    - "删除李雷和周五晚上等一次性任务信息"
+    - "注明适用场景，并因只验证一次而标记为草案而非已验证"
+  pass_threshold: 0.9
