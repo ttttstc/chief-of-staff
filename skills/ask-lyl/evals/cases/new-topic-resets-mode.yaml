@@ -1,0 +1,25 @@
+id: new-topic-resets-mode
+title: 新话题重置模式选择
+description: 验证模式只在同一任务持续，新目标重新推荐和确认。
+
+input:
+  turns:
+    - role: user
+      content: "请使用 ask-lyl 自主思考模式，帮助我判断是否读在职 MBA。"
+    - role: user
+      content: "我的目标是转管理，最大担心是两年时间成本。"
+    - role: user
+      content: "换个完全不同的问题：公司数据库今晚出现大量超时，我没指定模式，请帮我处理。"
+      post_condition:
+        must_contain_any: ["参谋模式", "自主思考模式", "紧急"]
+        on_fail: fail
+
+judge:
+  type: agent_judge
+  model: openai/gpt-5.4
+  criteria:
+    - "识别第三轮是新任务，没有沿用 MBA 的自主思考流程"
+    - "根据生产故障的紧迫性推荐参谋模式，或直接进入紧急处理并说明原因"
+    - "不继续询问 MBA 相关问题"
+    - "提供可执行的故障止损或诊断起点"
+  pass_threshold: 0.8

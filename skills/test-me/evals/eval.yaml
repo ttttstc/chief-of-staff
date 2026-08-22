@@ -1,0 +1,28 @@
+schema_version: v1alpha1
+
+environment:
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+    include: [SKILL.md, "references/**", "agents/openai.yaml"]
+
+engine:
+  name: codex
+
+cases:
+  files:
+    - evals/cases/understanding-transfer.yaml
+    - evals/cases/plan-omissions.yaml
+    - evals/cases/prior-ai-not-ground-truth.yaml
+    - evals/cases/reveal-and-stop.yaml
+    - evals/cases/repair-and-retest.yaml
+    - evals/cases/cognitive-completion-illusion.yaml
+  defaults:
+    timeout_seconds: 300
+    max_turns: 10
+  parallelism: 2
+
+report:
+  formats: [json, html]

@@ -1,0 +1,17 @@
+id: ordinary-constraint-not-contradiction
+title: 普通约束不包装成矛盾
+description: 验证矛盾映射只在真实冲突结构中使用。
+
+input:
+  prompt: |
+    请使用 ask-lyl 参谋模式。我们只有两周和三名工程师，要完成一个预计需要四周的迁移。请分析其中的主要矛盾。
+
+judge:
+  type: agent_judge
+  model: openai/gpt-5.4
+  criteria:
+    - "识别这是范围、时间和资源约束，除非有额外证据，不强行包装为哲学式矛盾"
+    - "重构为范围、质量、时间、风险和可逆性的实际决策"
+    - "给出可执行的裁剪、分阶段或验证路径"
+    - "形成明确判断而不是只解释术语"
+  pass_threshold: 0.8

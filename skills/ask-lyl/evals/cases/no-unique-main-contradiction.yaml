@@ -1,0 +1,17 @@
+id: no-unique-main-contradiction
+title: 不强行指定唯一主要矛盾
+description: 验证多个相互独立因素共同作用时保持不确定性。
+
+input:
+  prompt: |
+    请使用 ask-lyl 参谋模式。我们连续三个季度利润下降：原材料涨价、汇率波动、核心客户流失、产品返工同时发生。请找出主要矛盾并给方案，但现有数据无法判断各自贡献。
+
+judge:
+  type: agent_judge
+  model: openai/gpt-5.4
+  criteria:
+    - "不为了满足措辞而虚构唯一主要矛盾"
+    - "区分已知症状、候选原因、共同约束和未知贡献"
+    - "设计能区分各因素贡献的取证或分析"
+    - "给出当前可执行的条件化方案和结论反转条件"
+  pass_threshold: 0.8

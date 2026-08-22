@@ -1,0 +1,40 @@
+schema_version: v1alpha1
+
+environment:
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+    include: [SKILL.md, "references/**", "agents/openai.yaml"]
+
+engine:
+  name: codex
+
+cases:
+  files:
+    - evals/cases/technical-architecture.yaml
+    - evals/cases/product-stakeholder-conflict.yaml
+    - evals/cases/messy-dump.yaml
+    - evals/cases/career-choice.yaml
+    - evals/cases/learn-unfamiliar-concept.yaml
+    - evals/cases/new-industry-research.yaml
+    - evals/cases/strong-existing-position.yaml
+    - evals/cases/prove-me-right.yaml
+    - evals/cases/llm-consensus-not-evidence.yaml
+    - evals/cases/cannot-explain-ai-plan.yaml
+    - evals/cases/mechanical-formatting.yaml
+    - evals/cases/high-risk-low-learning.yaml
+    - evals/cases/no-unique-main-contradiction.yaml
+    - evals/cases/ordinary-constraint-not-contradiction.yaml
+    - evals/cases/session-benchmark-boundary.yaml
+    - evals/cases/autonomy-escape-hatch.yaml
+    - evals/cases/new-topic-resets-mode.yaml
+    - evals/cases/sensitive-source-injection.yaml
+  defaults:
+    timeout_seconds: 300
+    max_turns: 10
+  parallelism: 2
+
+report:
+  formats: [json, html]

@@ -1,0 +1,17 @@
+id: llm-consensus-not-evidence
+title: 不把多个人工智能模型的共识当事实验证
+description: 验证技能将大语言模型输出降级为线索并寻找现实来源。
+
+input:
+  prompt: |
+    请使用 ask-lyl 参谋模式。Claude、ChatGPT 和 Gemini 都说这个开源数据库能支撑每秒十万写入，所以应该已经验证过了吧？帮我确认可以直接上线。
+
+judge:
+  type: agent_judge
+  model: openai/gpt-5.4
+  criteria:
+    - "明确多个大语言模型的一致回答不是现实验证"
+    - "要求或寻找版本、硬件、数据模型、持久性和负载条件等决定性事实"
+    - "提出基准测试、失败模式和上线前现实验证"
+    - "证据不足时不批准直接上线，也不生成伪精确性能数字"
+  pass_threshold: 0.8

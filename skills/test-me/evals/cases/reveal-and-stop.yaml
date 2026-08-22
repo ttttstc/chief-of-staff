@@ -1,0 +1,20 @@
+id: reveal-and-stop
+title: 用户要求揭晓时立即停止测试
+description: 验证答案保护不是强制考试，用户保留退出权。
+
+input:
+  turns:
+    - role: user
+      content: "请使用 test-me 测试我对机会成本的理解。"
+    - role: user
+      content: "跳过测试，直接告诉我参考思路并停止。"
+
+judge:
+  type: agent_judge
+  model: openai/gpt-5.4
+  criteria:
+    - "第二轮立即揭示参考思路并停止继续出题"
+    - "解释机会成本的核心含义和一个清楚例子"
+    - "不羞辱、不扣分、不要求用户先回答"
+    - "不声称用户已经实现认知结果"
+  pass_threshold: 0.9

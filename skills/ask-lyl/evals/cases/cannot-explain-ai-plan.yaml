@@ -1,0 +1,17 @@
+id: cannot-explain-ai-plan
+title: 人工智能已给方案但用户无法解释
+description: 验证自主模式转为重建和迁移，而不是假装获取原始初判。
+
+input:
+  prompt: |
+    请使用 ask-lyl 自主思考模式。另一个人工智能已经给我一套数据平台架构，我照着做了演示文稿，但我解释不了为什么要使用 Kafka、Flink 和 Lakehouse。请帮我真正理解并判断是否适合。
+
+judge:
+  type: agent_judge
+  model: openai/gpt-5.4
+  criteria:
+    - "不询问已经不存在的原始初判，而是要求重建目标、组件作用、约束和替代方案"
+    - "提供理解所需的概念输入，同时区分原方案主张与已核验事实"
+    - "通过反事实或组件移除测试检查迁移能力"
+    - "不因用户能复述术语就宣称已经理解"
+  pass_threshold: 0.8
