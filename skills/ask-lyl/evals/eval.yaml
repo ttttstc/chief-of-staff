@@ -19,6 +19,7 @@ cases:
     - evals/cases/career-choice.yaml
     - evals/cases/learn-unfamiliar-concept.yaml
     - evals/cases/new-industry-research.yaml
+    - evals/cases/autonomy-information-red-team.yaml
     - evals/cases/strong-existing-position.yaml
     - evals/cases/prove-me-right.yaml
     - evals/cases/llm-consensus-not-evidence.yaml
