@@ -72,7 +72,7 @@ Use `/restore-knowledge` in Claude Code. It archives verified facts, reasoned ju
 | Capability | Entry point | Outcome |
 |---|---|---|
 | Advisor mode | `ask-lyl` | AI leads the analysis and provides a clear or conditional recommendation, major risks, reversal conditions, and a next step |
-| Autonomous-thinking mode | `ask-lyl` | AI supplies concepts, evidence, structure, options, and challenges while the user makes the key decisions |
+| Autonomous-thinking mode | `ask-lyl` | The user preserves an initial problem frame before AI fills gaps, challenges the judgment, and leaves the final decision to the user |
 | Understanding assessment | `test-me` | Distinguishes genuine understanding from repetition, transfer failure, and the illusion of cognitive completion |
 | Plan stress test | `test-me` | Finds hidden assumptions, counterexamples, third paths, second-order effects, failure signals, and validation gaps |
 | Knowledge restoration | `restore-knowledge` | Archives facts, judgments, failure cases, and reusable checklists, then recommends resources tied to current knowledge gaps |
@@ -113,7 +113,7 @@ Autonomous-thinking mode is a good fit when:
 - you are concerned about over-relying on AI conclusions;
 - you want AI to handle research, explanation, and gap-finding while retaining the key decisions yourself.
 
-Autonomous thinking is not an endless sequence of questions. The skill supplies necessary concepts and information sources, asks a batch of decision-relevant questions, and then lets the user form an initial judgment. If the user explicitly asks for a direct answer, the skill makes at most one brief ownership handback before providing its best judgment.
+Autonomous thinking is not an endless sequence of questions. A domain-familiar user first gives a short problem frame covering the objective, main model, facts versus assumptions, initial judgment, and calibration request; already stated material is not repeated. A complete novice receives essential concepts and sources before being asked to form a position. If the user explicitly asks for a direct answer, the skill makes at most one brief ownership handback before providing its best judgment.
 
 ### Using `test-me`
 
@@ -163,7 +163,8 @@ flowchart TD
     D --> E[Advisor mode]
     D --> F[Autonomous-thinking mode]
     E --> G[Problem foundation and decisive evidence]
-    F --> G
+    F --> O[User preserves a problem frame]
+    O --> G
     G --> H[Bidirectional steelmanning, causality, and path exploration]
     H --> I[Recommendation, reversal conditions, and reality check]
     F --> J[User makes the key decisions]
@@ -209,6 +210,8 @@ The analysis stops when the problem structure, decisive evidence, judgment, reve
 ### 4. Cognitive-autonomy protocol
 
 Autonomous-thinking mode delegates research, concept explanation, option expansion, and counterexample search to AI while reserving one to three decisions that truly control the overall direction for the user. After the user forms an initial judgment, AI presents its independent view and explains whether the disagreement comes from facts, values, risk, or time horizon.
+
+Before AI supplies a complete problem definition or preferred answer, the user preserves an initial frame: objective and success criteria, current problem model, facts versus assumptions, initial inclination, and the place most likely to be wrong. Short fragments and “I don't know” are valid. Existing input is not requested again; complete novices receive a neutral information foundation first. AI does not prefill the user's position or offer recommended choices before the initial judgment.
 
 A conversation counts as a cognitive-autonomy outcome only when the user can:
 
@@ -282,7 +285,7 @@ Supporting references are loaded only when a task needs them. The `evals/` direc
 
 ## Development and evaluation
 
-The three skills contain independent evaluation suites with 35 behavioral cases in total. After installing [skill-up](https://github.com/alibaba/skill-up), run:
+The three skills contain independent evaluation suites with 38 behavioral cases in total. After installing [skill-up](https://github.com/alibaba/skill-up), run:
 
 ```bash
 skill-up validate skills/ask-lyl/evals/eval.yaml
@@ -309,7 +312,7 @@ Yes. They continue with structured analysis, but must identify unverified claims
 
 ### Will autonomous-thinking mode keep asking questions indefinitely?
 
-No. It must contribute new concepts, evidence, or challenges and batch key questions. When the user explicitly requests a direct answer, it performs at most one brief ownership handback and then releases the gate.
+No. Autonomous mode may begin with a short problem-frame card, but it asks only for missing information that can change the analysis; complete novices receive information before being asked to guess. Later questions remain batched and high-value. When the user explicitly requests a direct answer, it performs at most one brief ownership handback and then releases the gate.
 
 ### Does `test-me` require `ask-lyl`?
 
